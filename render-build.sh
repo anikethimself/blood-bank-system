@@ -11,6 +11,6 @@ python manage.py migrate
 # Collect static files
 python manage.py collectstatic --noinput
 
-# Initialize data (optional, but good for first run)
-# python create_admin.py
-# python init_stock.py
+# Initialize data (runs on every deploy, but script handles duplicates)
+python create_admin.py
+python init_stock.py
