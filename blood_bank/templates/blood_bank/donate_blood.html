@@ -1,0 +1,26 @@
+{% extends 'blood_bank/base.html' %}
+
+{% block title %}Donate Blood{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card p-4">
+            <h2 class="text-center text-danger mb-4">Donate Blood</h2>
+            <div class="alert alert-info">
+                <strong>Your Blood Group:</strong> {{ user.profile.blood_group }}
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Units to Donate</label>
+                    <input type="number" name="units" class="form-control" min="1" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 py-3 rounded-4 shadow">
+                    <i class="fas fa-heart me-2"></i>Submit Donation
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

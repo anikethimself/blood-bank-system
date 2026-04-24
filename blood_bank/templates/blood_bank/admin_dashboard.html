@@ -1,0 +1,180 @@
+{% extends 'blood_bank/base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="row g-4 mb-5">
+    <div class="col-md-4">
+        <div class="card border-0 bg-gradient text-white p-4" style="background: linear-gradient(135deg, #ff4d4d, #d32f2f) !important;">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="mb-1">Total Donors</p>
+                    <h2 class="display-5 fw-bold mb-0">{{ total_donors }}</h2>
+                </div>
+                <i class="fas fa-users fa-3x opacity-50"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 bg-gradient text-white p-4" style="background: linear-gradient(135deg, #4facfe, #00f2fe) !important;">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="mb-1">Total Units</p>
+                    <h2 class="display-5 fw-bold mb-0">{{ total_units }}</h2>
+                </div>
+                <i class="fas fa-tint fa-3x opacity-50"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 bg-gradient text-white p-4" style="background: linear-gradient(135deg, #f093fb, #f5576c) !important;">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="mb-1">Pending Requests</p>
+                    <h2 class="display-5 fw-bold mb-0">{{ pending_requests }}</h2>
+                </div>
+                <i class="fas fa-clock fa-3x opacity-50"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-8">
+        <!-- Recent Requests Section -->
+        <div class="card p-4 mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="fw-bold m-0"><i class="fas fa-list-ul text-danger me-2"></i>Recent Blood Requests</h4>
+                <span class="badge bg-danger rounded-pill px-3">{{ requests.count }} New</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Requester</th>
+                            <th>Group</th>
+                            <th>Units</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in requests %}
+                        <tr>
+                            <td><span class="fw-bold">{{ req.requester.username }}</span></td>
+                            <td><span class="badge bg-danger rounded-pill px-3">{{ req.blood_group }}</span></td>
+                            <td>{{ req.units }} Units</td>
+                            <td>
+                                {% if req.status == 'PENDING' %}
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                {% elif req.status == 'APPROVED' %}
+                                    <span class="badge bg-success">Approved</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Rejected</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if req.status == 'PENDING' %}
+                                    <div class="btn-group">
+                                        <a href="{% url 'manage_request' req.id 'approve' %}" class="btn btn-sm btn-success">Approve</a>
+                                        <a href="{% url 'manage_request' req.id 'reject' %}" class="btn btn-sm btn-outline-danger">Reject</a>
+                                    </div>
+                                {% else %}
+                                    <span class="text-muted small">Processed</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Incoming Donations Section -->
+        <div class="card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="fw-bold m-0"><i class="fas fa-hand-holding-heart text-danger me-2"></i>Incoming Donations</h4>
+                <span class="badge bg-danger rounded-pill px-3">{{ donations.count }} Total</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Donor</th>
+                            <th>Group</th>
+                            <th>Units</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for don in donations %}
+                        <tr>
+                            <td><span class="fw-bold">{{ don.donor.username }}</span></td>
+                            <td><span class="badge bg-danger rounded-pill px-3">{{ don.blood_group }}</span></td>
+                            <td>{{ don.units }} Units</td>
+                            <td>
+                                {% if don.status == 'PENDING' %}
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                {% elif don.status == 'APPROVED' %}
+                                    <span class="badge bg-success">Approved</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Rejected</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if don.status == 'PENDING' %}
+                                    <div class="btn-group">
+                                        <a href="{% url 'manage_donation' don.id 'approve' %}" class="btn btn-sm btn-success">Approve</a>
+                                        <a href="{% url 'manage_donation' don.id 'reject' %}" class="btn btn-sm btn-outline-danger">Reject</a>
+                                    </div>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <!-- Inventory Section -->
+        <div class="card p-4 mb-4">
+            <h4 class="fw-bold mb-4"><i class="fas fa-warehouse text-danger me-2"></i>Inventory</h4>
+            <div class="row g-2">
+                {% for item in stock %}
+                <div class="col-6">
+                    <div class="p-3 border rounded-4 text-center bg-light">
+                        <h5 class="fw-bold text-danger mb-1">{{ item.blood_group }}</h5>
+                        <h6 class="fw-bold mb-0">{{ item.units }}</h6>
+                        <small class="text-muted">Units</small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Update Stock Section -->
+        <div class="card p-4">
+            <h4 class="fw-bold mb-3">Add Stock Manually</h4>
+            <form action="{% url 'update_stock' %}" method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <select name="blood_group" class="form-select border-0 bg-light rounded-3">
+                        {% for item in stock %}
+                            <option value="{{ item.blood_group }}">{{ item.blood_group }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <input type="number" name="units" class="form-control border-0 bg-light rounded-3" placeholder="Number of Units" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 py-2">Update Inventory</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends 'blood_bank/base.html' %}
+
+{% block title %}Search Donors{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card p-4 shadow-lg border-0 sticky-top" style="top: 100px;">
+            <h4 class="fw-bold mb-4"><i class="fas fa-filter text-danger me-2"></i>Filter Donors</h4>
+            <form method="get">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Blood Group</label>
+                    <select name="blood_group" class="form-select border-0 bg-light rounded-3 py-2">
+                        <option value="">All Groups</option>
+                        {% for bg in blood_groups %}
+                            <option value="{{ bg }}" {% if request.GET.blood_group == bg %}selected{% endif %}>{{ bg }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Location</label>
+                    <div class="input-group">
+                        <span class="input-group-text border-0 bg-light rounded-start-3"><i class="fas fa-map-marker-alt text-danger"></i></span>
+                        <input type="text" name="location" class="form-control border-0 bg-light rounded-end-3 py-2" placeholder="Search by city..." value="{{ request.GET.location }}">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 py-2 rounded-3 shadow">
+                    <i class="fas fa-search me-2"></i>Search Now
+                </button>
+                <a href="{% url 'search' %}" class="btn btn-light w-100 mt-2 py-2 rounded-3 border">Clear Filters</a>
+            </form>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold m-0 text-dark">Available Donors</h4>
+            <span class="badge bg-danger rounded-pill px-3 py-2">{{ donors.count }} Found</span>
+        </div>
+        
+        <div class="row g-4">
+            {% for donor in donors %}
+            <div class="col-md-6">
+                <div class="card p-4 border-0 h-100 position-relative overflow-hidden">
+                    <div class="position-absolute top-0 end-0 p-3">
+                        <span class="badge bg-danger fs-6 rounded-pill px-3">{{ donor.blood_group }}</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="avatar bg-light rounded-circle p-3 me-3">
+                            <i class="fas fa-user-donor fa-2x text-danger"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-0 text-capitalize">{{ donor.user.username }}</h5>
+                            <small class="text-muted"><i class="fas fa-map-marker-alt me-1"></i>{{ donor.location }}</small>
+                        </div>
+                    </div>
+                    <hr class="opacity-10">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="mb-0 text-muted small">Contact Number</p>
+                            <h6 class="fw-bold mb-0">{{ donor.contact }}</h6>
+                        </div>
+                        <a href="tel:{{ donor.contact }}" class="btn btn-outline-danger btn-sm rounded-circle" title="Call Donor">
+                            <i class="fas fa-phone"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <div class="card p-5 border-0">
+                    <i class="fas fa-search fa-4x text-light mb-4"></i>
+                    <h3 class="fw-bold">No Donors Found</h3>
+                    <p class="text-muted">Try adjusting your filters to find more donors.</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
